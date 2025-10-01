@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizer Store - Produtos Digitais</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .product-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2em;
+        }
+
+        .product-card h2 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .product-description {
+            color: #666;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .product-card .price {
+            font-size: 2.5em;
+            color: #667eea;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .product-card .price span {
+            font-size: 0.5em;
+            color: #666;
+        }
+
+        .btn-buy {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn-buy:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-preview {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-preview:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: scaleIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .pix-info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .pix-key {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed #667eea;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        .payment-instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 5px;
+        }
+
+        .payment-instructions ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .payment-instructions li {
+            margin: 8px 0;
+            color: #856404;
+        }
+
+        .verification-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            border: 2px solid #4caf50;
+        }
+
+        .verification-section h4 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-copy {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-copy:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .btn-verify {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-verify:hover {
+            background: #45a049;
+        }
+
+        .btn-close {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-close:hover {
+            background: #d0d0d0;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideInRight 0.5s ease;
+            z-index: 2000;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 400px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .preview-overlay img {
+            max-width: 80%;
+            max-height: 60%;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .preview-text {
+            font-size: 1.2em;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .preview-subtext {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Optimizer Store</h1>
+            <p>Produtos Digitais de Qualidade | Pagamento via PIX</p>
+        </header>
+
+        <div class="products">
+            <div class="product-card">
+                <div class="product-icon">⚡</div>
+                <h2>Optimizer Calibrador</h2>
+                <p class="product-description">Ferramenta profissional de otimização e calibração para máxima performance</p>
+                <div class="price">R$ 10<span>,00</span></div>
+                <button class="btn-buy" onclick="openModal('Optimizer Calibrador', 10, 'calibrador')">
+                    💳 Comprar com PIX
+                </button>
+                <button class="btn-preview" onclick="openPreview('calibrador')">
+                    👁️ Visualizar Preview
+                </button>
+            </div>
+
+            <div class="product-card">
+                <div class="product-icon">💎</div>
+                <h2>Optimizer Auxílio 6V</h2>
+                <p class="product-description">Solução completa de auxílio e suporte versão 6 com recursos avançados</p>
+                <div class="price">R$ 15<span>,00</span></div>
+                <button class="btn-buy" onclick="openModal('Optimizer Auxílio 6V', 15, 'auxilio6v')">
+                    💳 Comprar com PIX
+                </button>
+                <button class="btn-preview" onclick="openPreview('auxilio6v')">
+                    👁️ Visualizar Preview
+                </button>
+            </div>
+
+            <div class="product-card">
+                <div class="product-icon">🔥</div>
+                <h2>Optimizer Auxílio 10</h2>
+                <p class="product-description">Versão premium com todas as funcionalidades e suporte prioritário</p>
+                <div class="price">R$ 25<span>,00</span></div>
+                <button class="btn-buy" onclick="openModal('Optimizer Auxílio 10', 25, 'auxilio10')">
+                    💳 Comprar com PIX
+                </button>
+                <button class="btn-preview" onclick="openPreview('auxilio10')">
+                    👁️ Visualizar Preview
+                </button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© 2024 Optimizer Store - Todos os direitos reservados</p>
+            <p>Pagamento seguro via PIX</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Compra -->
+    <div id="modalBuy" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Finalizar Compra</h3>
+            
+            <div class="pix-info">
+                <p><strong>Valor a pagar:</strong></p>
+                <p id="modalPrice" style="font-size: 2em; color: #667eea; font-weight: bold; margin: 10px 0;"></p>
+                
+                <p style="margin-top: 20px;"><strong>Chave PIX:</strong></p>
+                <div class="pix-key">37423905-6b99-4f68-9cae-31a6eb9a7736</div>
+                
+                <button class="btn-copy" onclick="copyPixKey()">
+                    📋 Copiar Chave PIX
+                </button>
+            </div>
+
+            <div class="payment-instructions">
+                <strong>📝 Instruções:</strong>
+                <ol>
+                    <li>Copie a chave PIX acima</li>
+                    <li>Abra o app do seu banco</li>
+                    <li>Faça o pagamento usando a chave copiada</li>
+                    <li>Após o pagamento, insira seu email e o ID da transação abaixo</li>
+                </ol>
+            </div>
+
+            <div class="verification-section">
+                <h4>✅ Confirmar Pagamento</h4>
+                <div class="input-group">
+                    <input type="email" id="buyerEmail" placeholder="Seu email para receber o produto">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="transactionId" placeholder="ID da transação PIX (opcional)">
+                </div>
+                <button class="btn-copy btn-verify" onclick="verifyPayment()">
+                    ✓ Confirmar e Receber Produto
+                </button>
+            </div>
+            
+            <button class="btn-copy btn-close" onclick="closeModal('modalBuy')">
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Preview -->
+    <div id="modalPreview" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h3 id="previewTitle">Preview do Produto</h3>
+            
+            <div class="preview-frame">
+                <iframe id="previewIframe" style="width: 100%; height: 100%; border: none;"></iframe>
+                <div class="preview-overlay">
+                    <div style="font-size: 4em; margin-bottom: 20px;">🔒</div>
+                    <div class="preview-text">Conteúdo Protegido</div>
+                    <div class="preview-subtext">Compre para ter acesso completo ao produto</div>
+                </div>
+            </div>
+
+            <p style="color: #666; margin: 20px 0;">
+                ℹ️ Este é apenas um preview visual. O acesso completo será liberado após a compra e confirmação do pagamento.
+            </p>
+            
+            <button class="btn-copy btn-close" onclick="closeModal('modalPreview')">
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const products = {
+            'calibrador': {
+                url: 'https://optmizercalibrador.netlify.app/',
+                name: 'Optimizer Calibrador',
+                price: 10
+            },
+            'auxilio6v': {
+                url: 'https://optimizerauxilio6v.netlify.app/',
+                name: 'Optimizer Auxílio 6V',
+                price: 15
+            },
+            'auxilio10': {
+                url: 'https://optimizeauxilio10.netlify.app/',
+                name: 'Optimizer Auxílio 10',
+                price: 25
+            }
+        };
+
+        let currentProduct = '';
+        let currentPrice = 0;
+        let currentProductKey = '';
+
+        function openModal(product, price, productKey) {
+            currentProduct = product;
+            currentPrice = price;
+            currentProductKey = productKey;
+            document.getElementById('modalTitle').textContent = product;
+            document.getElementById('modalPrice').textContent = `R$ ${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('buyerEmail').value = '';
+            document.getElementById('transactionId').value = '';
+            document.getElementById('modalBuy').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            if (modalId === 'modalPreview') {
+                document.getElementById('previewIframe').src = '';
+            }
+        }
+
+        function openPreview(productKey) {
+            const product = products[productKey];
+            document.getElementById('previewTitle').textContent = `Preview: ${product.name}`;
+            document.getElementById('previewIframe').src = product.url;
+            document.getElementById('modalPreview').style.display = 'flex';
+        }
+
+        function copyPixKey() {
+            const pixKey = '37423905-6b99-4f68-9cae-31a6eb9a7736';
+            navigator.clipboard.writeText(pixKey).then(() => {
+                showNotification('✅ Chave PIX copiada com sucesso!', 'success');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = pixKey;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('✅ Chave PIX copiada com sucesso!', 'success');
+            });
+        }
+
+        function verifyPayment() {
+            const email = document.getElementById('buyerEmail').value;
+            const transactionId = document.getElementById('transactionId').value;
+
+            if (!email || !email.includes('@')) {
+                showNotification('❌ Por favor, insira um email válido', 'error');
+                return;
+            }
+
+            // Simular verificação de pagamento
+            showNotification('⏳ Verificando pagamento...', 'success');
+
+            setTimeout(() => {
+                // Salvar compra no localStorage
+                const purchase = {
+                    product: currentProduct,
+                    productKey: currentProductKey,
+                    email: email,
+                    transactionId: transactionId,
+                    date: new Date().toISOString(),
+                    price: currentPrice
+                };
+
+                const purchases = JSON.parse(localStorage.getItem('purchases') || '[]');
+                purchases.push(purchase);
+                localStorage.setItem('purchases', JSON.stringify(purchases));
+
+                closeModal('modalBuy');
+                showNotification('🎉 Pagamento confirmado! Redirecionando para o produto...', 'success');
+
+                setTimeout(() => {
+                    // Abrir produto em nova aba
+                    window.open(products[currentProductKey].url, '_blank');
+                    showNotification(`✉️ Link enviado para ${email}`, 'success');
+                }, 2000);
+            }, 2000);
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification' + (type === 'error' ? ' error' : '');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal(e.target.id);
+            }
+        }
+    </script>
+</body>
+</html>
